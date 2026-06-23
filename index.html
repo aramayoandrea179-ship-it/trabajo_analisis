@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Servicio de Facturación y Soporte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        form {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input, textarea, button {
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>📲 Panel de Cliente</h1>
+
+    <!-- Formulario Factura -->
+    <form id="facturaForm">
+        <h2>📄 Solicitud de Factura</h2>
+        <input type="text" name="nombre" placeholder="Nombre completo" required>
+        <input type="text" name="nit" placeholder="NIT" required>
+        <input type="number" name="monto" placeholder="Monto en Bs." required>
+        <button type="submit">Enviar Factura</button>
+    </form>
+
+    <!-- Formulario Soporte -->
+    <form id="soporteForm">
+        <h2>💬 Soporte</h2>
+        <input type="text" name="nombre" placeholder="Tu nombre" required>
+        <textarea name="mensaje" placeholder="Escribe tu consulta..." required></textarea>
+        <button type="submit">Enviar Consulta</button>
+    </form>
+
+    <!-- Formulario Calificación -->
+    <form id="calificacionForm">
+        <h2>⭐ Calificación</h2>
+        <input type="number" name="calificacion" min="1" max="5" placeholder="Puntuación (1-5)" required>
+        <textarea name="comentario" placeholder="Comentario..." required></textarea>
+        <button type="submit">Enviar Calificación</button>
+    </form>
+
+    <script>
+        async function enviarFormulario(formId, endpoint) {
+            const form = document.getElementById(formId);
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const datos = Object.fromEntries(new FormData(form));
+                const res = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(datos)
+                });
+                const json = await res.json();
+                alert(JSON.stringify(json));
+            });
+        }
+
+        enviarFormulario("facturaForm", "/factura");
+        enviarFormulario("soporteForm", "/soporte");
+        enviarFormulario("calificacionForm", "/calificacion");
+    </script>
+</body>
+</html>
