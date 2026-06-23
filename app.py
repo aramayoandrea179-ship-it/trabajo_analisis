@@ -102,4 +102,5 @@ def enviar_ubicacion():
         return jsonify({"ok": False})
 
 if __name__ == "__main__":
+    # Para pruebas locales
     app.run(debug=True, host="0.0.0.0", port=5000)
