@@ -1,14 +1,12 @@
+import os
 import asyncio
-import threading
 from flask import Flask, render_template, request, jsonify
 from telegram import Bot
-from telegram.ext import Application, CommandHandler
 
-# 🔑 Credenciales de tu bot
-TOKEN = "8714287310:AAHxSBhNi2J8Jy_wLFb4k2y3jKbuNR4InRk"
-CHAT_ID = "7091936081"
+# 🔑 Credenciales desde variables de entorno
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
-# --- Flask App ---
 app = Flask(__name__)
 bot = Bot(token=TOKEN)
 
@@ -62,7 +60,7 @@ def calificacion():
         print("Error:", e)
         return jsonify({"ok": False})
 
-# --- Nuevos Endpoints ---
+# --- NUEVOS ENDPOINTS ---
 @app.route("/imagen", methods=["POST"])
 def enviar_imagen():
     data = request.json
@@ -103,41 +101,5 @@ def enviar_ubicacion():
         print("Error:", e)
         return jsonify({"ok": False})
 
-# --- Telegram Bot con comandos ---
-def run_telegram_bot():
-    app_bot = Application.builder().token(TOKEN).build()
-
-    async def start(update, context):
-        await update.message.reply_text("👋 Hola, soy tu bot de soporte. Usa /help para ver opciones.")
-
-    async def help_command(update, context):
-        await update.message.reply_text(
-            "📌 Comandos disponibles:\n"
-            "/start - Iniciar conversación\n"
-            "/help - Ver ayuda\n"
-            "/ubicacion - Enviar ubicación\n"
-            "/soporte - Contactar soporte"
-        )
-
-    async def ubicacion(update, context):
-        await update.message.reply_location(latitude=-17.9647, longitude=-67.1060)
-
-    async def soporte(update, context):
-        await update.message.reply_text("💬 Escribe tu consulta y un operador te responderá.")
-
-    # Registrar comandos
-    app_bot.add_handler(CommandHandler("start", start))
-    app_bot.add_handler(CommandHandler("help", help_command))
-    app_bot.add_handler(CommandHandler("ubicacion", ubicacion))
-    app_bot.add_handler(CommandHandler("soporte", soporte))
-
-    print("🤖 Bot escuchando en Telegram...")
-    app_bot.run_polling()
-
-# --- Ejecutar Flask y Bot en paralelo ---
 if __name__ == "__main__":
-    # Hilo para el bot de Telegram
-    threading.Thread(target=run_telegram_bot, daemon=True).start()
-
-    # Flask App
     app.run(debug=True, host="0.0.0.0", port=5000)
